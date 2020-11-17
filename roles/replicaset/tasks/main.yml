@@ -1,0 +1,10 @@
+- name: Copy mongod.conf file
+  template:
+    src: mongorc.js.j2
+    force: yes
+    dest: /etc/mongodrc.js
+    #owner: mongodb
+- name: Init replicaset on primary {{ inventory_hostname }})
+  shell:  mongo /etc/mongodrc.js
+  when: "'mongo-0' in inventory_hostname"
+

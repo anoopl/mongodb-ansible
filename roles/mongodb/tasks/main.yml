@@ -1,0 +1,39 @@
+- name: Update the /etc/hosts file with node name
+  tags: etchostsupdate
+  become: yes
+  become_user: root
+  lineinfile:
+    dest: "/etc/hosts"
+    regexp: ".*\t{{ hostvars[item]['ansible_hostname']}}\t{{ hostvars[item]['ansible_hostname']}}"
+    line: "{{ hostvars[item]['ansible_default_ipv4']['address'] }}\t{{ inventory_hostname }}"
+    state: present
+    backup: yes
+  register: etchostsupdate
+  when: ansible_hostname != "{{ item }}" or ansible_hostname == "{{ item }}"
+  with_items: "{{groups['all']}}"
+
+- name: Add MongoDB GPG Key
+  shell: wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+
+- name: Add the APT repository 
+  shell: echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+
+- name: apt-get update
+  apt:
+    update_cache: yes
+
+- name: Install Mongodb
+  apt:
+    name: mongodb-org
+
+- name: Copy mongod.conf file
+  template:
+    src: mongod.conf.j2
+    force: yes
+    dest: /etc/mongod.conf
+    #owner: mongodb
+
+- name: Make sure Mongod is running
+  systemd:
+    state: started
+    name: mongod

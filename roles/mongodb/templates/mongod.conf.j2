@@ -22,25 +22,15 @@ systemLog:
 net:
   port: 27017
   bindIp: {% if hostvars[inventory_hostname]['host_private_ip'] is defined %}{{ hostvars[inventory_hostname]['host_private_ip'] }}{% else %}{{ hostvars[inventory_hostname]['host_ip'] }}{% endif %},127.0.0.1
-  tls:
-    mode: requireTLS
-    certificateKeyFile: /etc/ssl/mongodb.pem
-    CAFile:     /etc/ssl/ca.pem
-    allowConnectionsWithoutCertificates: true
 
 #processManagement:
 
-security:
-  keyFile: /etc/mongodb/mongo-keyfile
-  javascriptEnabled: false
 
 operationProfiling:
   slowOpThresholdMs: 200
   mode: slowOp
   slowOpSampleRate: 100
 
-replication:
-  replSetName: {{ mongodb_replicaset_name }}
 
 #sharding:
 

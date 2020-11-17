@@ -3,5 +3,6 @@
   become: yes
   roles:
     - mongodb
+    - replicaset
   vars:
     mongodb_version: "4.4"
