@@ -2,9 +2,9 @@
   lineinfile:
     dest: /etc/hosts
     regexp: '.*{{ item }}$'
-    line: "{{ hostvars[item].ansible_host }} {{item}}"
+    line: "{{ hostvars[item]['ansible_default_ipv4']['address'] }} {{item}}"
     state: present
-  when: hostvars[item].ansible_host is defined
+  when: hostvars[item].inventory_hostname is defined
   with_items: "{{ groups.all }}"
 
 - name: Add MongoDB GPG Key
