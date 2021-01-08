@@ -11,20 +11,15 @@
   filesystem:
     fstype: xfs
     dev: /dev/nvme1n1
-
+  ignore_errors: yes
+  
 - name: Mount the Volume to /data
   mount:
     fstype: xfs
     src: /dev/nvme1n1
     path: /data
     state: mounted
-
-- name: Creates directory
-  file:
-    path: /data/mongodb
-    state: directory
-    owner: mongodb
-    group: mongodb
+  ignore_errors: yes
     
 - name: Add MongoDB GPG Key
   shell: wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
@@ -39,7 +34,14 @@
 - name: Install Mongodb
   apt:
     name: mongodb-org
-
+    
+- name: Creates directory
+  file:
+    path: /data/mongodb
+    state: directory
+    owner: mongodb
+    group: mongodb
+    
 - name: Copy mongod.conf file
   template:
     src: mongod.conf.j2
