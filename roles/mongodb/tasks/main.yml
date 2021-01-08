@@ -9,16 +9,23 @@
 
 - name: Format Mongodb data disk to XFS
   filesystem:
-    fstype: ext2
+    fstype: xfs
     dev: /dev/nvme1n1
 
 - name: Mount the Volume to /data
   mount:
-    fstype: ext2
+    fstype: xfs
     src: /dev/nvme1n1
     path: /data
     state: mounted
 
+- name: Creates directory
+  file:
+    path: /data/mongodb
+    state: directory
+    owner: mongodb
+    group: mongodb
+    
 - name: Add MongoDB GPG Key
   shell: wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
 
