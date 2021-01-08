@@ -7,6 +7,18 @@
   when: hostvars[item].inventory_hostname is defined
   with_items: "{{ groups.all }}"
 
+- name: Format Mongodb data disk to XFS
+  filesystem:
+    fstype: ext2
+    dev: /dev/nvme1n1
+
+- name: Mount the Volume to /data
+  mount:
+    fstype: ext2
+    src: /dev/nvme1n1
+    path: /data
+    state: mounted
+
 - name: Add MongoDB GPG Key
   shell: wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
 
